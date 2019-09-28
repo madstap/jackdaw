@@ -3,7 +3,8 @@
   (:require
    [clojure.tools.logging :as log]
    [manifold.stream :as s]
-   [manifold.deferred :as d]))
+   [manifold.deferred :as d]
+   [manifold.time :as t]))
 
 
 ;; Journal
@@ -13,7 +14,7 @@
 
 (defn watch-for
   "Returns the first true application of the journal to the specified condition `condition?`"
-  [machine condition? timeout info]
+  [machine condition? timeout info tick]
   (let [journal (:journal machine)
         p (promise)
         id (java.util.UUID/randomUUID)
@@ -22,12 +23,17 @@
                             (remove-watch journal id)
                             (deliver p {:result :found
                                         :info result})))]
-    (add-watch journal id (fn [k r old new]
-                            (check-condition new)))
-    ;; don't rely on watcher to 'check-condition'
-    ;; in case journal is already in a final, good state
-    (check-condition @journal)
-    (deref p timeout {:error :timeout :info info})))
+
+    (let [check-schedule (t/every tick #(check-condition @journal))]
+
+      (add-watch journal id (fn [k r old new]
+                              (check-condition new)))
+
+      (try
+        (deref p timeout {:error :timeout :info info})
+        (finally
+          (check-schedule))))))
+
 
 (defn journal-read
   "Append `record` into the `journal` under `journal-key`"
