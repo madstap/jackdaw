@@ -137,7 +137,7 @@
                  "Content-Type" (content-types :json)}
         body {:name id
               :auto.offset.reset "latest"
-              :auto.commit.enable false}
+              :auto.commit.enable true}
         preserve-https (fn [consumer]
                          ;; Annoyingly, the proxy will return an HTTP address for a
                          ;; subscriber even when its running over HTTPS
