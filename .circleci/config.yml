@@ -144,7 +144,7 @@ jobs:
           command: |
             export LEIN_GPG=/home/circleci/jackdaw/.circleci/bin/gpg
             export REAL_GPG=$(which gpg)
-
+            git checkout -q $CIRCLE_TAG
             lein do jar, pom, deploy clojars
 
   deploy_snapshot:
