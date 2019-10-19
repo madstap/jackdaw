@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## [0.7.0] - [2019-10-18]
+
+### Fixed
+
+ * Wait until stream is "RUNNING" before starting kstream-fixture
 
 ## [0.6.9] - [2019-10-16]
 
