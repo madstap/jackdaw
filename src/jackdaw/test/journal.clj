@@ -33,7 +33,9 @@
   "Append `record` into the `journal` under `journal-key`"
   [journal journal-key v]
   (let [result (update-in journal journal-key concat v)]
-    result))
+    (assoc result
+           :updated-at (System/currentTimeMillis))))
+
 
 (defn reverse-lookup
   "Given a map of `topic-metadata`, find the name of the entry whose
